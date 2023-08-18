@@ -3,6 +3,7 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const { ProvidePlugin } = require("webpack");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -37,6 +38,38 @@ const config = {
         },
       }),
     ],
+  ],
+  plugins: [
+    // Add custom webpack config to make @workpal-build/jwt-token-validation work
+    () => ({
+      name: "custom-webpack-config",
+      configureWebpack: () => {
+        return {
+          plugins: [
+            new ProvidePlugin({
+              process: require.resolve("process/browser"),
+            }),
+          ],
+          resolve: {
+            fallback: {
+              buffer: require.resolve("buffer"),
+              stream: require.resolve("stream-browserify"),
+              util: require.resolve("util"),
+              zlib: require.resolve("browserify-zlib"),
+              https: require.resolve("https-browserify"),
+              url: require.resolve("url"),
+              crypto: require.resolve("crypto-browserify"),
+              http: require.resolve("stream-http"),
+              path: require.resolve("path-browserify"),
+              assert: require.resolve("assert"),
+              tty: require.resolve("tty-browserify"),
+              os: require.resolve("os-browserify/browser"),
+              fs: false,
+            },
+          },
+        };
+      },
+    }),
   ],
 
   themeConfig:
